@@ -61,32 +61,6 @@
       padding: 15px;
       border-radius: 10px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .food-card:hover {
-      background: #ffe0b2;
-      transform: scale(1.05);
-    }
-    /* Order popup */
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
-      background: white;
-      padding: 25px 40px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      text-align: center;
-      font-size: 1.2rem;
-      opacity: 0;
-      transition: 0.3s;
-      z-index: 1000;
-    }
-    .popup.show {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
     }
   </style>
 </head>
@@ -96,9 +70,6 @@
     <button onclick="suggestLunch()">Suggest Me</button>
     <div class="result" id="result"></div>
   </div>
-
-  <!-- Fake order popup -->
-  <div class="popup" id="popup"></div>
 
   <script>
     const lunchOptions = [
@@ -136,26 +107,11 @@
         const card = document.createElement("div");
         card.classList.add("food-card");
         card.textContent = item;
-        
-        // Click pe fake order
-        card.onclick = () => placeOrder(item);
-
         resultDiv.appendChild(card);
       });
 
       resultDiv.classList.add("show");
     }
-
-    function placeOrder(item) {
-      const popup = document.getElementById("popup");
-      popup.textContent = `✅ Your order for "${item}" has been placed!`;
-      popup.classList.add("show");
-
-      setTimeout(() => {
-        popup.classList.remove("show");
-      }, 2000); // 2 second baad popup gayab ho jayega
-    }
   </script>
 </body>
 </html>
-
