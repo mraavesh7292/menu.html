@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lunch Suggestion App</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    button {
+      background: #ff5722;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e64a19;
+      transform: scale(1.05);
+    }
+    .result {
+      margin-top: 25px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #444;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.5s;
+    }
+    .show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .food-card {
+      background: #f9f9f9;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .food-card:hover {
+      background: #ffe0b2;
+      transform: scale(1.05);
+    }
+    /* Order popup */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: white;
+      padding: 25px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      text-align: center;
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: 0.3s;
+      z-index: 1000;
+    }
+    .popup.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🍴 What's for Lunch?</h1>
+    <button onclick="suggestLunch()">Suggest Me</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- Fake order popup -->
+  <div class="popup" id="popup"></div>
+
+  <script>
+    const lunchOptions = [
+      "Veg Roll 🌯",
+      "Paneer Frankie 🥙",
+      "Cheese Sandwich 🥪",
+      "Chhole Kulche 🍛",
+      "Pav Bhaji 🍲",
+      "Veg Biryani 🍚",
+      "Chicken Biryani 🍗",
+      "Idli Sambhar 🍽",
+      "Masala Dosa 🥞",
+      "Uttapam 🥘",
+      "Momos 🥟",
+      "Pizza 🍕",
+      "Burger 🍔",
+      "Fried Rice 🍜",
+      "Tandoori Roti & Sabzi 🍴"
+    ];
+
+    function suggestLunch() {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = ""; 
+      
+      // Random 3 dishes suggest karenge
+      let suggestions = [];
+      while(suggestions.length < 3) {
+        const random = lunchOptions[Math.floor(Math.random() * lunchOptions.length)];
+        if(!suggestions.includes(random)) {
+          suggestions.push(random);
+        }
+      }
+
+      suggestions.forEach(item => {
+        const card = document.createElement("div");
+        card.classList.add("food-card");
+        card.textContent = item;
+        
+        // Click pe fake order
+        card.onclick = () => placeOrder(item);
+
+        resultDiv.appendChild(card);
+      });
+
+      resultDiv.classList.add("show");
+    }
+
+    function placeOrder(item) {
+      const popup = document.getElementById("popup");
+      popup.textContent = `✅ Your order for "${item}" has been placed!`;
+      popup.classList.add("show");
+
+      setTimeout(() => {
+        popup.classList.remove("show");
+      }, 2000); // 2 second baad popup gayab ho jayega
+    }
+  </script>
+</body>
+</html>
+
