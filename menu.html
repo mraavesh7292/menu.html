@@ -1,117 +1,357 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lunch Suggestion App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Colorful Menu Demo — Welcome</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffecd2, #fcb69f);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    :root{
+      --bg1: #ffecd2;   /* warm top */
+      --bg2: #fcb69f;   /* warm bottom */
+      --card:#ffffff;
+      --muted:#5b6b78;
+      --glass: rgba(255,255,255,0.6);
+      --radius:14px;
+      --shadow: 0 10px 30px rgba(16,24,40,0.08);
+      --accent: #1976d2;
+      --green:#16a34a;  /* starters */
+      --blue:#2563eb;   /* mains */
+      --orange:#f97316; /* drinks */
+      --pink:#ec4899;   /* desserts */
+      --accent-contrast: #fff;
     }
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:#0f172a}
+    body{background:linear-gradient(180deg,var(--bg1),var(--bg2));display:flex;align-items:center;justify-content:center;padding:24px}
+    .stage{width:100%;max-width:980px;position:relative}
+    /* Welcome overlay */
+    .welcome{
+      background:linear-gradient(135deg,#7c3aed,#06b6d4);
+      color:white;
+      border-radius:20px;
+      padding:36px;
+      box-shadow:0 18px 40px rgba(15,23,42,0.2);
+      display:flex;
+      gap:20px;
+      align-items:center;
+      justify-content:space-between;
+      overflow:hidden;
+      position:relative;
     }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #333;
+    .welcome .left{max-width:68%}
+    .welcome h1{margin:0;font-size:clamp(20px,3.6vw,34px);line-height:1.02}
+    .welcome p{margin:8px 0 0;color:rgba(255,255,255,0.92);font-weight:500}
+    .welcome .cta{display:flex;gap:12px;align-items:center}
+    .btn{
+      background:var(--accent-contrast);
+      color:var(--accent);
+      border:none;padding:12px 18px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.12);
     }
-    button {
-      background: #ff5722;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 12px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s;
+    .btn.ghost{background:transparent;color:rgba(255,255,255,0.95);border:1px solid rgba(255,255,255,0.12)}
+    .hero-illustration{width:160px;height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;opacity:0.95}
+    /* Menu card (hidden initially) */
+    .menu-wrap{position:relative;transform:translateY(28px);opacity:0;transition:all .6s cubic-bezier(.2,.9,.2,1);height:0;overflow:visible}
+    .menu-open .menu-wrap{transform:none;opacity:1;height:auto;margin-top:22px}
+    .menu-card{
+      background:var(--card);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      transition:transform .45s ease,opacity .45s ease;
+      border:1px solid rgba(16,24,40,0.04);
     }
-    button:hover {
-      background: #e64a19;
-      transform: scale(1.05);
+    .menu-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #f1f5f9}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#22c1c3,#fdbb2d);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;box-shadow:0 8px 20px rgba(37,99,235,0.12)
     }
-    .result {
-      margin-top: 25px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #444;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.5s;
+    .brand h2{margin:0;font-size:1.05rem}
+    .brand p{margin:0;color:var(--muted);font-size:0.9rem}
+    .actions{display:flex;gap:10px;align-items:center}
+    .download-btn{background:transparent;border:1px solid rgba(16,24,40,0.06);padding:10px 12px;border-radius:10px;cursor:pointer}
+    /* body grid */
+    .menu-body{display:grid;grid-template-columns:240px 1fr;min-height:420px}
+    /* categories */
+    .categories{padding:16px;border-right:1px solid #f8fafc;background:linear-gradient(180deg,#fff,#fbfdff)}
+    .cat-list{display:flex;flex-direction:column;gap:10px}
+    .cat{
+      display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;cursor:pointer;border:1px solid transparent;transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
     }
-    .show {
-      opacity: 1;
-      transform: translateY(0);
+    .cat:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(11,20,40,0.06)}
+    .col{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+    .cat-label{font-weight:800;color:#0f172a}
+    .cat.active{background:linear-gradient(90deg,rgba(16,24,40,0.02),transparent);border-color:rgba(16,24,40,0.04)}
+    /* items */
+    .items{padding:18px;overflow:auto}
+    .items-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .item{
+      display:flex;gap:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);align-items:center;border:1px solid #f1f6fb;transition:transform .12s ease,box-shadow .12s ease;
     }
-    .food-card {
-      background: #f9f9f9;
-      margin: 10px 0;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    .item:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(16,24,40,0.08)}
+    .thumb{width:84px;height:84px;border-radius:10px;background:linear-gradient(135deg,#f0f9ff,#e6f7ff);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--blue);font-size:18px}
+    .info{flex:1}
+    .title{font-weight:900;margin:0}
+    .desc{margin:6px 0 0 0;color:var(--muted);font-size:0.9rem}
+    .meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+    .price{font-weight:900}
+    .tag{font-weight:800;padding:6px 8px;border-radius:999px;background:rgba(0,0,0,0.04);font-size:0.78rem}
+    /* category colors (used on swatches) */
+    .col.green{background:linear-gradient(135deg,var(--green),#36d399)} 
+    .col.blue{background:linear-gradient(135deg,var(--blue),#4f46e5)}
+    .col.orange{background:linear-gradient(135deg,var(--orange),#fb923c)}
+    .col.pink{background:linear-gradient(135deg,var(--pink),#f472b6)}
+    /* category-specific accents for item thumbs */
+    .thumb.green{background:linear-gradient(135deg,#f0fff6,#ecfdf5); color:var(--green)}
+    .thumb.blue{background:linear-gradient(135deg,#eef2ff,#eef4ff); color:var(--blue)}
+    .thumb.orange{background:linear-gradient(135deg,#fff7ed,#fff3e0); color:var(--orange)}
+    .thumb.pink{background:linear-gradient(135deg,#fff0f6,#fff4fb); color:var(--pink)}
+    /* footer controls */
+    .footer-controls{display:flex;align-items:center;gap:12px;padding:12px;border-top:1px solid #f1f5f9;background:linear-gradient(180deg,transparent,#fff);justify-content:space-between}
+    .toggle-welcome{background:transparent;border:none;color:var(--muted);cursor:pointer}
+    /* small screens */
+    @media (max-width:880px){
+      .menu-body{grid-template-columns:1fr}
+      .items-grid{grid-template-columns:1fr}
+      .categories{display:flex;overflow:auto;gap:8px;padding:12px;border-right:none;border-bottom:1px solid #f8fafc}
+      .cat{min-width:120px;flex:0 0 auto}
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🍴 What's for Lunch?</h1>
-    <button onclick="suggestLunch()">Suggest Me</button>
-    <div class="result" id="result"></div>
+  <div class="stage" id="stage">
+    <!-- Welcome -->
+    <div class="welcome" id="welcome">
+      <div class="left">
+        <h1>Welcome to Modern Bites</h1>
+        <p>Fresh plates, bold flavors. Tap below to open the menu and explore our colorful categories.</p>
+      </div>
+      <div class="cta">
+        <button class="btn" id="viewMenu">View Menu</button>
+        <button class="btn ghost" id="peek">Peek</button>
+      </div>
+    </div>
+
+    <!-- Menu (hidden until open) -->
+    <div class="menu-wrap" id="menuWrap" aria-hidden="true">
+      <div class="menu-card" role="region" aria-label="Menu">
+        <div class="menu-head">
+          <div class="brand">
+            <div class="logo">MB</div>
+            <div>
+              <h2>Modern Bites</h2>
+              <p>Seasonal menu • Open now</p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="download-btn" id="downloadBtn" title="Download menu as JSON">Download Menu</button>
+            <button class="download-btn" id="closeBtn" title="Close menu">Close</button>
+          </div>
+        </div>
+
+        <div class="menu-body">
+          <aside class="categories" id="categories">
+            <div class="cat-list" id="catList">
+              <!-- categories inserted by JS -->
+            </div>
+          </aside>
+
+          <main class="items" id="items">
+            <div class="items-grid" id="itemsGrid">
+              <!-- items inserted by JS -->
+            </div>
+          </main>
+        </div>
+
+        <div class="footer-controls">
+          <div>
+            <strong>Tip:</strong> Tap a category to reveal items. Use the Download button to save the menu.
+          </div>
+          <div>
+            <button class="toggle-welcome" id="toggleWelcome">Toggle Welcome</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script>
-    const lunchOptions = [
-      "Veg Roll 🌯",
-      "Paneer Frankie 🥙",
-      "Cheese Sandwich 🥪",
-      "Chhole Kulche 🍛",
-      "Pav Bhaji 🍲",
-      "Veg Biryani 🍚",
-      "Chicken Biryani 🍗",
-      "Idli Sambhar 🍽",
-      "Masala Dosa 🥞",
-      "Uttapam 🥘",
-      "Momos 🥟",
-      "Pizza 🍕",
-      "Burger 🍔",
-      "Fried Rice 🍜",
-      "Tandoori Roti & Sabzi 🍴"
-    ];
+<script>
+/* Data and behavior for the colorful restaurant menu demo */
 
-    function suggestLunch() {
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = ""; 
-      
-      // Random 3 dishes suggest karenge
-      let suggestions = [];
-      while(suggestions.length < 3) {
-        const random = lunchOptions[Math.floor(Math.random() * lunchOptions.length)];
-        if(!suggestions.includes(random)) {
-          suggestions.push(random);
-        }
-      }
+// Category definitions (id, label, colorClass)
+const CATEGORIES = [
+  {id:'starters', label:'Starters', color:'green'},
+  {id:'mains', label:'Mains', color:'blue'},
+  {id:'drinks', label:'Drinks', color:'orange'},
+  {id:'desserts', label:'Desserts', color:'pink'}
+];
 
-      suggestions.forEach(item => {
-        const card = document.createElement("div");
-        card.classList.add("food-card");
-        card.textContent = item;
-        resultDiv.appendChild(card);
-      });
+// Example menu items (can be extended or loaded from server)
+const MENU = [
+  {id:101,cat:'starters',title:'Crispy Cauliflower',desc:'Spiced, oven-roasted florets with herb dip',price:'₹199',tag:'Veg'},
+  {id:102,cat:'starters',title:'Garlic Prawns',desc:'Char-grilled prawns with garlic butter',price:'₹349',tag:'Seafood'},
+  {id:103,cat:'mains',title:'Kerala Fish Curry',desc:'Tangy coconut curry, steamed rice optional',price:'₹299',tag:'Spicy'},
+  {id:104,cat:'mains',title:'Truffle Mac & Cheese',desc:'Creamy pasta with shaved truffle',price:'₹379',tag:'Chef\'s'},
+  {id:105,cat:'drinks',title:'House Lemonade',desc:'Fresh lemon, mint and cane sugar',price:'₹99',tag:'Cold'},
+  {id:106,cat:'drinks',title:'Spiced Chai',desc:'Masala chai with whole spices',price:'₹79',tag:'Hot'},
+  {id:107,cat:'desserts',title:'Chocolate Fondant',desc:'Warm cake with molten center',price:'₹199',tag:'Veg'},
+  {id:108,cat:'desserts',title:'Mango Cheesecake',desc:'Creamy cheesecake with mango compote',price:'₹219',tag:'Cold'}
+];
 
-      resultDiv.classList.add("show");
-    }
-  </script>
+// DOM refs
+const stage = document.getElementById('stage');
+const welcome = document.getElementById('welcome');
+const viewMenu = document.getElementById('viewMenu');
+const peek = document.getElementById('peek');
+const menuWrap = document.getElementById('menuWrap');
+const catList = document.getElementById('catList');
+const itemsGrid = document.getElementById('itemsGrid');
+const downloadBtn = document.getElementById('downloadBtn');
+const closeBtn = document.getElementById('closeBtn');
+const toggleWelcome = document.getElementById('toggleWelcome');
+
+let activeCategory = 'all';
+
+// Utility: create category buttons
+function renderCategories(){
+  catList.innerHTML = '';
+  // "All" button
+  const allBtn = createCatButton('all','All','#fff','');
+  allBtn.classList.add('active');
+  catList.appendChild(allBtn);
+
+  CATEGORIES.forEach(cat=>{
+    const btn = createCatButton(cat.id, cat.label, cat.color, cat.color);
+    catList.appendChild(btn);
+  });
+}
+function createCatButton(id,label,colorClass,swatchClass){
+  const b = document.createElement('button');
+  b.className = 'cat';
+  b.dataset.cat = id;
+  b.innerHTML = `
+    <div class="col ${swatchClass}">${label.split(' ').map(w=>w[0]).join('')}</div>
+    <div>
+      <div class="cat-label">${label}</div>
+      <div style="font-size:.82rem;color:var(--muted)">Tap to view</div>
+    </div>
+  `;
+  b.addEventListener('click', ()=>selectCategory(id,b));
+  return b;
+}
+
+// Select category and animate
+function selectCategory(cat, btnEl){
+  activeCategory = cat;
+  // visual active
+  Array.from(catList.querySelectorAll('.cat')).forEach(c=>c.classList.remove('active'));
+  btnEl.classList.add('active');
+  // render items
+  renderItems();
+  // small pulse animation (reflow)
+  btnEl.animate([{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:220,easing:'cubic-bezier(.2,.9,.2,1)'});
+}
+
+// Render items for active category
+function renderItems(){
+  itemsGrid.innerHTML = '';
+  const filtered = (activeCategory === 'all') ? MENU.slice() : MENU.filter(i=>i.cat===activeCategory);
+  if(filtered.length === 0){
+    itemsGrid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted);padding:18px">No items in this category</div>';
+    return;
+  }
+  filtered.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'item';
+    // pick thumb class based on category color
+    const catDef = CATEGORIES.find(c=>c.id===it.cat);
+    const colorClass = catDef ? catDef.color : 'blue';
+    el.innerHTML = `
+      <div class="thumb ${colorClass}">${it.title.split(' ').slice(0,2).map(w=>w[0]).join('')}</div>
+      <div class="info">
+        <div class="title">${it.title}</div>
+        <div class="desc">${it.desc}</div>
+      </div>
+      <div class="meta">
+        <div class="price">${it.price}</div>
+        <div class="tag">${it.tag || ''}</div>
+      </div>
+    `;
+    itemsGrid.appendChild(el);
+  });
+}
+
+// Open & close menu animations
+function openMenu(animated=true){
+  document.body.classList.add('menu-open');
+  menuWrap.setAttribute('aria-hidden','false');
+  // slide welcome up slightly and fade
+  if(animated){
+    welcome.animate([{opacity:1,transform:'translateY(0)'},{opacity:0,transform:'translateY(-18px)'}],{duration:420,easing:'cubic-bezier(.2,.9,.2,1)',fill:'forwards'});
+    setTimeout(()=>{ welcome.style.display='none'; }, 420);
+  } else {
+    welcome.style.display='none';
+  }
+}
+function closeMenu(){
+  // show welcome
+  welcome.style.display = 'flex';
+  welcome.animate([{opacity:0,transform:'translateY(-18px)'},{opacity:1,transform:'translateY(0)'}],{duration:340,easing:'ease-out'});
+  document.body.classList.remove('menu-open');
+  menuWrap.setAttribute('aria-hidden','true');
+}
+
+// Download menu as JSON
+function downloadMenu(){
+  const data = {generatedAt:new Date().toISOString(), categories:CATEGORIES, items:MENU};
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'menu-modern-bites.json';
+  document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+}
+
+// Peek (open menu but don't hide welcome)
+peek.addEventListener('click', ()=>{
+  // brief overlay open (clone)
+  if(document.body.classList.contains('menu-open')) return;
+  openMenu(false);
+  // keep welcome visible (slim)
+  setTimeout(()=>{ document.querySelector('.menu-wrap').style.boxShadow='0 30px 80px rgba(16,24,40,0.12)'; }, 40);
+});
+
+// View Menu (close welcome and open)
+viewMenu.addEventListener('click', ()=>{
+  openMenu(true);
+  // render categories + items
+  renderCategories();
+  renderItems();
+});
+
+// Close menu
+closeBtn.addEventListener('click', ()=>{
+  closeMenu();
+});
+
+// Download
+downloadBtn.addEventListener('click', downloadMenu);
+
+// Toggle Welcome visibility
+toggleWelcome.addEventListener('click', ()=>{
+  if(welcome.style.display === 'none'){ welcome.style.display='flex'; return; }
+  welcome.style.display = 'none';
+});
+
+// Initialize: render categories (but keep menu hidden until opened)
+renderCategories();
+renderItems();
+
+/* Accessibility: keyboard support */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && document.body.classList.contains('menu-open')){
+    closeMenu();
+  }
+});
+</script>
 </body>
 </html>
